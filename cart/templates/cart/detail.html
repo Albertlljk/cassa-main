@@ -1,0 +1,88 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+
+<section class="cart-page">
+
+  <h1 class="page-title">Корзина</h1>
+
+  {% if cart|length > 0 %}
+
+  <div class="cart-layout">
+
+    <!-- ITEMS -->
+    <div class="cart-items">
+
+      {% for item in cart %}
+      {% with product=item.product %}
+      <div class="cart-item">
+
+        <div class="cart-item-image">
+          <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
+               alt="{{ product.name }}">
+        </div>
+
+        <div class="cart-item-info">
+          <a href="{{ product.get_absolute_url }}" class="cart-item-title">
+            {{ product.name }}
+          </a>
+
+          <div class="cart-item-meta">
+            <span>Цена: {{ item.price }} BYN</span>
+            <span>Кол-во: {{ item.quantity }}</span>
+          </div>
+        </div>
+
+        <div class="cart-item-total">
+          {{ item.total_price }} BYN
+        </div>
+
+        <div class="cart-item-remove">
+          <a href="{% url 'cart:cart_remove' product.id %}">✕</a>
+        </div>
+
+      </div>
+      {% endwith %}
+      {% endfor %}
+
+    </div>
+
+    <!-- SUMMARY -->
+    <aside class="cart-summary">
+      <h3>Итого</h3>
+
+      <div class="summary-line">
+        <span>Товаров:</span>
+        <span>{{ cart|length }}</span>
+      </div>
+
+      <div class="summary-line total">
+        <span>Сумма:</span>
+        <span>{{ cart.get_total_price }} BYN</span>
+      </div>
+
+      <a href="{% url 'orders:order_create' %}" class="btn-checkout">
+        Оформить заказ
+      </a>
+
+    </aside>
+
+  </div>
+
+  {% else %}
+
+  <div class="cart-empty">
+    <h2>Корзина пуста</h2>
+    <a href="{% url 'shop:product_list' %}" class="btn-back">
+      Перейти в каталог
+    </a>
+  </div>
+
+  {% endif %}
+
+</section>
+
+{% endblock %}
